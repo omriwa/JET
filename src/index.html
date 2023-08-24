@@ -9,7 +9,6 @@
       let value = null;
       
       socket.on("value", (event) => {
-        console.log("EVENT ",event)
             const {value,won} = event
 
             if(!won){
