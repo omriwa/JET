@@ -8,13 +8,24 @@
       const socket = io();
       let value = null;
       
-      socket.on("value", (value) => {
-             document.getElementById("value").innerHTML = value ? value : "waiting for other player"
+      socket.on("value", (event) => {
+        console.log("EVENT ",event)
+            const {value,won} = event
+
+            if(!won){
+             document.getElementById("value").innerHTML = value !== null ? ("value is:" + value) : "waiting for other player"
+            }
+            else {
+                document.getElementById("value").innerHTML = ""
+            }
+             document.getElementById("victorious").innerHTML = won ? "You won" : ""
       })
       const playTurn = value => socket.emit("play",value)
    </script>
    <body>
-    <h1>value is <span id="value"></span>
+    <h1>
+        <span id="victorious"></span>
+        <span id="value"></span>
         <div>
             <button onclick="playTurn(1)">1</button>
             <button onclick="playTurn(0)">0</button>
