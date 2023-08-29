@@ -1,28 +1,46 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <title>Hello!</title>
-   </head>
-   <script src = "/socket.io/socket.io.js"></script>
-   <script>
-      const socket = io();
-      let value = null;
-      
-      socket.on("value", (event) => {
-            const {value,won} = event
 
-            if(!won){
-             document.getElementById("value").innerHTML = value !== null ? ("value is:" + value) : "waiting for other player"
-            }
-            else {
-                document.getElementById("value").innerHTML = ""
-            }
-             document.getElementById("victorious").innerHTML = won ? "You won" : ""
-      })
-      const playTurn = value => socket.emit("play",value)
-   </script>
-   <body>
+<head>
+    <title>Hello!</title>
+</head>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const playTurn = value => {
+        if (document.getElementById("victorious").innerHTML === "") {
+            document.getElementById("value").innerHTML = value + " was added"
+            socket.emit("play", value)
+        }
+    }
+    const resetGame = () => {
+        document.getElementById("value").innerHTML = "The game has been reset"
+        document.getElementById("victorious").innerHTML = ""
+        socket.emit("reset-game")
+    }
+
+    socket.on("other-player-connected", () => {
+        document.getElementById("other-player-information").innerHTML = ""
+    })
+    socket.on("other-player-disconnected", () => {
+        document.getElementById("other-player-information").innerHTML = "Waiting for other player"
+    })
+    socket.on("value", (event) => {
+        const { value, won } = event
+
+        if (!won && document.getElementById("other-player-information").innerHTML === "") {
+            document.getElementById("value").innerHTML = "value is:" + value
+        }
+        else {
+            document.getElementById("value").innerHTML = ""
+        }
+        document.getElementById("victorious").innerHTML = won ? "You won" : ""
+    })
+</script>
+
+<body>
     <h1>
+        <span id="other-player-information">Waiting for other player</span>
         <span id="victorious"></span>
         <span id="value"></span>
         <div>
@@ -30,5 +48,9 @@
             <button onclick="playTurn(0)">0</button>
             <button onclick="playTurn(-1)">-1</button>
         </div>
-    </body>
+        <div>
+            <button onClick="resetGame()">Reset</button>
+        </div>
+</body>
+
 </html>

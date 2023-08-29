@@ -1,8 +1,8 @@
 const gameData = {
     player1: null,
-    player: null,
+    player2: null,
     value: null,
-    winningPlayer: null,
+    won: null,
     turn: null,
 }
 
